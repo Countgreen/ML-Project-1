@@ -1,1 +1,1 @@
-## This is my first ml preject
+## This is my first ml project
