@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Score Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #0f172a; /* dark navy */
+      --bg2: #0b2545; /* indigo-ish */
+      --card: rgba(255,255,255,0.06);
+      --accent: #7c3aed; /* purple */
+      --glass: rgba(255,255,255,0.03);
+      --muted: rgba(255,255,255,0.6);
+      --glass-border: rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 70%);
+      color: #e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:1050px;
+      display:grid;
+      grid-template-columns: 420px 1fr;
+      gap:28px;
+      align-items:start;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:22px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6), inset 0 1px 0 var(--glass-border);
+      border: 1px solid var(--glass-border);
+    }
+
+    header h1{margin:0;font-size:20px;letter-spacing:-0.2px}
+    header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+    form{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+
+    label{font-size:13px;color:var(--muted)}
+
+    .input, select{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      background:var(--glass);
+      border:1px solid var(--glass-border);
+      color:inherit;
+      font-size:14px;
+      outline:none;
+    }
+    .row{display:flex;gap:12px}
+    .row .col{flex:1}
+
+    .submit{
+      margin-top:8px;
+      padding:12px 16px;
+      border-radius:12px;
+      border:0;
+      cursor:pointer;
+      font-weight:600;
+      background-image:linear-gradient(90deg, rgba(124,58,237,0.95), rgba(99,102,241,0.95));
+      color:white;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.12);
+    }
+
+    /* Result pane */
+    .result-panel{
+      padding:26px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .hero-metric{
+      display:flex;align-items:center;gap:14px;justify-content:space-between
+    }
+    .metric-big{font-size:42px;font-weight:800}
+    .metric-sub{color:var(--muted);font-size:13px}
+
+    .card.small{padding:12px;border-radius:10px}
+
+    .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+
+    /* small screens */
+    @media (max-width:880px){
+      .container{grid-template-columns:1fr; padding-bottom:40px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <header>
+        <h1>📊 Student Score Predictor</h1>
+        <p>Enter details below — the model will estimate the expected score.</p>
+      </header>
+
+      <form action="{{ url_for('predict_datapoint') }}" method="post">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" class="input">
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+        </select>
+
+        <label for="ethnicity">Race / Ethnicity</label>
+        <select id="ethnicity" name="ethnicity" class="input">
+          <option value="group A">Group A</option>
+          <option value="group B">Group B</option>
+          <option value="group C">Group C</option>
+          <option value="group D">Group D</option>
+          <option value="group E">Group E</option>
+        </select>
+
+        <label for="parental_level_of_education">Parental Level of Education</label>
+        <select id="parental_level_of_education" name="parental_level_of_education" class="input">
+          <option value="bachelor's degree">Bachelor's degree</option>
+          <option value="some college">Some college</option>
+          <option value="master's degree">Master's degree</option>
+          <option value="associate's degree">Associate's degree</option>
+          <option value="high school">High school</option>
+        </select>
+
+        <label for="lunch">Lunch</label>
+        <select id="lunch" name="lunch" class="input">
+          <option value="standard">Standard</option>
+          <option value="free/reduced">Free/Reduced</option>
+        </select>
+
+        <label for="test_preparation_course">Test Preparation Course</label>
+        <select id="test_preparation_course" name="test_preparation_course" class="input">
+          <option value="none">None</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <div class="row">
+          <div class="col">
+            <label for="reading_score">Reading Score</label>
+            <input id="reading_score" name="writing_score" type="number" min="0" max="100" step="1" class="input" placeholder="e.g. 72" required>
+          </div>
+          <div class="col">
+            <label for="writing_score">Writing Score</label>
+            <input id="writing_score" name="reading_score" type="number" min="0" max="100" step="1" class="input" placeholder="e.g. 74" required>
+          </div>
+        </div>
+
+        <button type="submit" class="submit">Predict score →</button>
+      </form>
+
+      <footer>
+        Tip: use whole numbers (0–100). The app expects the above field names to match exactly.
+      </footer>
+    </div>
+
+    <div class="card result-panel">
+      <div class="hero-metric">
+        <div>
+          <div style="font-size:13px;color:var(--muted)">Model prediction</div>
+          {% if results is defined %}
+            <div class="metric-big">{{ results }}</div>
+            <div class="metric-sub">Predicted overall score (rounded)</div>
+          {% else %}
+            <div class="metric-big">—</div>
+            <div class="metric-sub">Submit the form to see a prediction</div>
+          {% endif %}
+        </div>
+        <div class="card small">
+          <div style="font-size:12px;color:var(--muted)">Status</div>
+          {% if results is defined %}
+            <div style="font-weight:700">Prediction ready</div>
+          {% else %}
+            <div style="font-weight:700;color:var(--muted)">Waiting</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card small">
+        <div style="font-weight:600">Input summary</div>
+        <div class="detail-grid" style="margin-top:10px;font-size:13px;color:var(--muted)">
+          <div>Gender: {{ request.form.get('gender','—') }}</div>
+          <div>Ethnicity: {{ request.form.get('ethnicity','—') }}</div>
+          <div>Parental Education: {{ request.form.get('parental_level_of_education','—') }}</div>
+          <div>Lunch: {{ request.form.get('lunch','—') }}</div>
+          <div>Prep Course: {{ request.form.get('test_preparation_course','—') }}</div>
+          <div>Reading: {{ request.form.get('reading_score','—') }}</div>
+          <div>Writing: {{ request.form.get('writing_score','—') }}</div>
+        </div>
+      </div>
+
+      <div class="card small">
+        <div style="font-weight:600">Notes</div>
+        <p style="margin:8px 0 0;color:var(--muted);font-size:13px">If anything looks off, double-check the input names in <code>app.py</code> so they match the form fields exactly.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
